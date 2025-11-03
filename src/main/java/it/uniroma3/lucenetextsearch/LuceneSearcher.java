@@ -69,19 +69,6 @@ public class LuceneSearcher {
      * @throws Exception If an error occurs during search
      */
     public void search(String queryString) throws Exception {
-        search(queryString, null);
-    }
-    
-    /**
-     * Executes a search with optional query ID for metrics display
-     * Format: filename <terms> or content <terms>
-     * If terms are in quotes, executes a phrase query
-     *
-     * @param queryString The query string to execute
-     * @param queryId Optional query ID for display purposes (can be null)
-     * @throws Exception If an error occurs during search
-     */
-    public void search(String queryString, String queryId) throws Exception {
         // Pattern to parse the query: field followed by terms
         // Supports phrase queries with quotes
         Pattern pattern = Pattern.compile("^(filename|content)\\s+(.+)$");
@@ -122,11 +109,6 @@ public class LuceneSearcher {
         
         // Display results
         displayResults(results, endTime - startTime);
-        
-        // Display metrics if results are found
-        if (results.scoreDocs.length > 0) {
-            displayMetrics(results, queryId);
-        }
     }
     
     /**
@@ -190,62 +172,6 @@ public class LuceneSearcher {
     }
     
     /**
-     * Calculates and displays evaluation metrics based on search results
-     * Uses score-based thresholds to estimate precision and recall
-     * 
-     * @param results The search results
-     * @param queryId The query identifier for display purposes (can be null)
-     * @throws IOException If an I/O error occurs
-     */
-    private void displayMetrics(TopDocs results, String queryId) throws IOException {
-        if (results.scoreDocs.length == 0) {
-            return;
-        }
-        
-        // Calculate average score
-        double totalScore = 0;
-        for (ScoreDoc scoreDoc : results.scoreDocs) {
-            totalScore += scoreDoc.score;
-        }
-        double avgScore = totalScore / results.scoreDocs.length;
-        
-        // Count high-relevance results (score above average)
-        int highRelevanceCount = 0;
-        for (ScoreDoc scoreDoc : results.scoreDocs) {
-            if (scoreDoc.score >= avgScore) {
-                highRelevanceCount++;
-            }
-        }
-        
-        // Calculate metrics
-        int totalRetrieved = results.scoreDocs.length;
-        int totalRelevant = (int) results.totalHits.value();
-        
-        // Precision: ratio of high-scoring docs to total retrieved
-        double precision = totalRetrieved > 0 ? (double) highRelevanceCount / totalRetrieved : 0.0;
-        
-        // Recall: ratio of retrieved docs to total matches in index
-        double recall = totalRelevant > 0 ? (double) totalRetrieved / totalRelevant : 0.0;
-        
-        // F1-Score
-        double f1Score = (precision + recall > 0) ? 
-            2 * (precision * recall) / (precision + recall) : 0.0;
-        
-        // Display metrics
-        System.out.println("\n=== SEARCH METRICS ===");
-        if (queryId != null) {
-            System.out.println("Query ID: " + queryId);
-        }
-        System.out.println(String.format("Total matching documents: %d", totalRelevant));
-        System.out.println(String.format("Retrieved documents:      %d", totalRetrieved));
-        System.out.println(String.format("High-relevance docs:      %d (score >= %.4f)", highRelevanceCount, avgScore));
-        System.out.println(String.format("Average score:            %.4f", avgScore));
-        System.out.println(String.format("Precision:                %.4f (%.2f%%)", precision, precision * 100));
-        System.out.println(String.format("Recall:                   %.4f (%.2f%%)", recall, recall * 100));
-        System.out.println(String.format("F1-Score:                 %.4f", f1Score));
-    }
-    
-    /**
      * Closes resources
      * 
      * @throws IOException If an I/O error occurs
@@ -265,8 +191,7 @@ public class LuceneSearcher {
         System.out.println("  filename <terms>       - Search in file names");
         System.out.println("  content <terms>        - Search in content");
         System.out.println("  content \"phrase\"       - Phrase query (consecutive terms)");
-        System.out.println("\nMetrics (precision, recall, F1) are automatically calculated for each search.");
-        System.out.println("Type 'exit' to quit\n");
+        System.out.println("\nType 'exit' to quit\n");
         
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             LuceneSearcher searcher = new LuceneSearcher();

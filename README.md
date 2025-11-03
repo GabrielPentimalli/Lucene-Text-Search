@@ -1,15 +1,14 @@
 # Lucene Text Search
 
-A text file indexing and search system built with Apache Lucene with automatic evaluation metrics.
+A text file indexing and search system built with Apache Lucene.
 
 ## Description
 
 **Lucene Text Search** is a project that implements a full-text search engine for text files using Apache Lucene. The system includes:
 - **Full-text indexing** with two distinct fields:
-  - **filename**: Indexed with KeywordAnalyzer
-  - **content**: Indexed with StandardAnalyzer
-- **Automatic evaluation metrics**: Precision, Recall, and F1-Score calculated for each search
-- **Score-based relevance assessment**: Uses score distribution to estimate document relevance
+  - **filename**: Indexed with KeywordAnalyzer for exact matching
+  - **content**: Indexed with StandardAnalyzer for full-text search
+- **Relevance scoring**: Documents are ranked by their relevance score
 
 ## Project Structure
 
@@ -17,11 +16,10 @@ A text file indexing and search system built with Apache Lucene with automatic e
 lucene-text-search/
 ├── src/main/java/it/uniroma3/lucenetextsearch/
 │   ├── LuceneTextIndexer.java     # Indexing documents
-│   ├── LuceneSearcher.java         # Interactive search with metrics
-│   ├── SearchMetrics.java          # Metrics calculation (Precision, Recall, F1)
-│   └── SearchEvaluator.java        # Automated evaluation
+│   └── LuceneSearcher.java         # Interactive search
 ├── data/                           # .txt files to index
 ├── lucene_index/                   # Lucene index directory
+├── wiki.py                         # Optional: Generate random Wikipedia articles
 ├── pom.xml                         # Maven configuration
 └── README.md
 ```
@@ -30,23 +28,23 @@ lucene-text-search/
 
 - **Search by filename**:
   ```
-  Query> filename file1.txt
+  Query> filename file007.txt
   ```
 
 - **Search in content**:
   ```
-  Query> content lucene
+  Query> content goldeneye
   ```
 
 - **Phrase query (consecutive terms)**:
   ```
-  Query> content "apache lucene"
+  Query> content "James Bond"
   ```
 
 - **Boolean queries**:
   ```
-  Query> content apache AND lucene
-  Query> content apache OR lucene
+  Query> content romanova OR bianchi
+  Query> content connery AND fleming
   ```
 
 - **Exit the program**:
@@ -89,7 +87,7 @@ mvn clean compile
 
 # 2. Create data directory and add text files
 mkdir data
-echo "Sample content about Apache Lucene" > data/doc1.txt
+echo "Dr. No is a 1962 British spy film directed by Terence Young." > data/file007.txt
 
 # 3. Index the documents
 mvn exec:java@indexer
@@ -99,6 +97,49 @@ mvn exec:java@searcher
 
 ```
 
+## Optional: Generate Random Wikipedia Articles
+
+The project includes a Python script (`wiki.py`) that can automatically generate text files by fetching random articles from Wikipedia.
+
+### Prerequisites
+
+Install the Wikipedia library:
+```bash
+pip install wikipedia
+```
+
+### Usage
+
+The script generates 100 random Wikipedia articles by default:
+
+```bash
+python3 wiki.py
+```
+
+The files will be created in the `data/` directory with the following naming format:
+```
+001_Article_Title_1234.txt
+002_Another_Article_5678.txt
+...
+```
+
+Each file contains:
+- A header with the article topic
+- Content extracted from Wikipedia (4-7 sentences)
+
+### Customize Number of Files
+
+To generate a different number of files, modify the last line in `wiki.py`:
+```python
+if __name__ == "__main__":
+    create_wiki_files(num_files=50)  # Change to desired number
+```
+
+After generating the files, run the indexer to index them:
+```bash
+mvn exec:java@indexer
+```
+
 ---
 
-Project for the second homework assignment in Data Engineering course @ Roma Tre University﻿.
+Project for the second homework assignment in Data Engineering course @ Roma Tre University.

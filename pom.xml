@@ -87,36 +87,6 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    
-                    <!-- Configuration for TestQueries -->
-                    <execution>
-                        <id>test-queries</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>it.uniroma3.lucenetextsearch.TestQueries</mainClass>
-                            <arguments>
-                                <argument>--add-modules</argument>
-                                <argument>jdk.incubator.vector</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    
-                    <!-- Configuration for SearchEvaluator -->
-                    <execution>
-                        <id>evaluator</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>it.uniroma3.lucenetextsearch.SearchEvaluator</mainClass>
-                            <arguments>
-                                <argument>--add-modules</argument>
-                                <argument>jdk.incubator.vector</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>

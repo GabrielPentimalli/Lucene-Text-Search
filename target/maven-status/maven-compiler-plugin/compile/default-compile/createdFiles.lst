@@ -1,5 +1,2 @@
-it/uniroma3/lucenetextsearch/SearchEvaluator.class
-it/uniroma3/lucenetextsearch/RelevanceJudgments.class
 it/uniroma3/lucenetextsearch/LuceneSearcher.class
-it/uniroma3/lucenetextsearch/SearchMetrics.class
 it/uniroma3/lucenetextsearch/LuceneTextIndexer.class
