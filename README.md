@@ -101,4 +101,4 @@ mvn exec:java@searcher
 
 ---
 
-Project for the "Ingegneria dei Dati" exam, Roma Tre University.
+Project for the "Ingegneria dei Dati" exam @Roma Tre University.
