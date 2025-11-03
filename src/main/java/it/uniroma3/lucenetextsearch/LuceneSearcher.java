@@ -20,6 +20,8 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class LuceneSearcher {
     private static final String FIELD_FILENAME = "filename";
     private static final String FIELD_CONTENT = "content";
     private static final String INDEX_DIR = "lucene_index";
+    private static final String DATA_DIR = "data";
     private static final int MAX_RESULTS = 20;
     
     private IndexReader reader;
@@ -49,7 +52,16 @@ public class LuceneSearcher {
      * @throws IOException If an I/O error occurs
      */
     public LuceneSearcher() throws IOException {
-        Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIR));
+        Path indexPath = Paths.get(INDEX_DIR);
+        
+        // Check if index exists
+        if (!Files.exists(indexPath) || !indexDirectoryExists(indexPath)) {
+            System.out.println("Index not found. Creating index from data directory...");
+            createIndex();
+            System.out.println("Index created successfully!\n");
+        }
+        
+        Directory indexDirectory = FSDirectory.open(indexPath);
         reader = DirectoryReader.open(indexDirectory);
         searcher = new IndexSearcher(reader);
    
@@ -58,6 +70,37 @@ public class LuceneSearcher {
         analyzerPerField.put(FIELD_FILENAME, new KeywordAnalyzer());
         Analyzer defaultAnalyzer = new StandardAnalyzer();
         analyzer = new PerFieldAnalyzerWrapper(defaultAnalyzer, analyzerPerField);
+    }
+    
+    /**
+     * Checks if the index directory contains valid index files
+     * 
+     * @param indexPath Path to the index directory
+     * @return true if valid index files exist
+     */
+    private boolean indexDirectoryExists(Path indexPath) {
+        try {
+            // Check if there are segment files (segments_* pattern)
+            return Files.list(indexPath)
+                    .anyMatch(p -> p.getFileName().toString().startsWith("segments"));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Creates the index by calling LuceneTextIndexer
+     * 
+     * @throws IOException If an I/O error occurs during indexing
+     */
+    private void createIndex() throws IOException {
+        LuceneTextIndexer indexer = new LuceneTextIndexer();
+        int indexed = indexer.indexDirectory(DATA_DIR);
+        indexer.close();
+        
+        if (indexed == 0) {
+            System.out.println("Warning: No .txt files found in " + DATA_DIR + " directory");
+        }
     }
     
     /**
