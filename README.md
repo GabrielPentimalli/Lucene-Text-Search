@@ -101,4 +101,4 @@ mvn exec:java@searcher
 
 ---
 
-Project for the "Ingegneria dei Dati" course @Roma Tre University.
+Project for the second homework assignment in Data Engineering course @ Roma Tre University﻿.
