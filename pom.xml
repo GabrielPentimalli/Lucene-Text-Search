@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>it.uniroma3</groupId>
+    <artifactId>lucene-text-search</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <name>Lucene Text Search</name>
+    <description>Text file indexing and search system using Apache Lucene</description>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lucene.version>10.3.1</lucene.version>
+    </properties>
+
+    <dependencies>
+        <!-- Lucene Core -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>10.3.1</version>
+        </dependency>
+
+        <!-- Lucene QueryParser -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>10.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analysis-common</artifactId>
+            <version>10.3.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+            
+            <!-- Plugin to execute Java classes -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <!-- Configuration for LuceneTextIndexer -->
+                    <execution>
+                        <id>indexer</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>it.uniroma3.lucenetextsearch.LuceneTextIndexer</mainClass>
+                            <arguments>
+                                <argument>--add-modules</argument>
+                                <argument>jdk.incubator.vector</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- Configuration for LuceneSearcher -->
+                    <execution>
+                        <id>searcher</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>it.uniroma3.lucenetextsearch.LuceneSearcher</mainClass>
+                            <arguments>
+                                <argument>--add-modules</argument>
+                                <argument>jdk.incubator.vector</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- Configuration for TestQueries -->
+                    <execution>
+                        <id>test-queries</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>it.uniroma3.lucenetextsearch.TestQueries</mainClass>
+                            <arguments>
+                                <argument>--add-modules</argument>
+                                <argument>jdk.incubator.vector</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- Configuration for SearchEvaluator -->
+                    <execution>
+                        <id>evaluator</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>it.uniroma3.lucenetextsearch.SearchEvaluator</mainClass>
+                            <arguments>
+                                <argument>--add-modules</argument>
+                                <argument>jdk.incubator.vector</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
